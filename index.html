@@ -37,7 +37,7 @@
 					} catch (err) {
 						console.error('Error abriendo el chat: ', err);
 					}
-				}, 7000); // 2 segundos adicionales para que se cargue completamente
+				}, 2000); // 2 segundos después de aparecer el ícono
 				
 			} catch (err) {
 				console.error('Error loading Embedded Messaging: ', err);
@@ -49,3 +49,51 @@
 
 </body>
 </html>
+
+
+
+<!--
+Guía de uso de utilAPI de Salesforce Embedded Messaging
+
+1. ¿Qué es utilAPI?
+utilAPI es una interfaz JavaScript que permite interactuar con el widget de chat de Salesforce Embedded Messaging desde tu página web.
+
+2. Funciones principales:
+
+- openWidget()
+	Abre el widget de chat.
+	Ejemplo:
+	embeddedservice_bootstrap.utilAPI.openWidget();
+
+- closeWidget()
+	Cierra el widget de chat.
+	Ejemplo:
+	embeddedservice_bootstrap.utilAPI.closeWidget();
+
+- isWidgetOpen()
+	Devuelve true si el widget está abierto, false si está cerrado.
+	Ejemplo:
+	const abierto = embeddedservice_bootstrap.utilAPI.isWidgetOpen();
+
+- minimizeWidget()
+	Minimiza el widget de chat.
+	Ejemplo:
+	embeddedservice_bootstrap.utilAPI.minimizeWidget();
+
+- maximizeWidget()
+	Maximiza el widget de chat.
+	Ejemplo:
+	embeddedservice_bootstrap.utilAPI.maximizeWidget();
+
+3. Uso típico:
+Asegúrate de que embeddedservice_bootstrap.utilAPI esté disponible antes de llamar a sus métodos, normalmente después de que el script de bootstrap se haya cargado.
+
+4. Ejemplo de integración:
+<script>
+	if (embeddedservice_bootstrap.utilAPI) {
+		embeddedservice_bootstrap.utilAPI.openWidget();
+	}
+</script>
+
+Consulta la documentación oficial de Salesforce para más detalles y métodos avanzados.
+-->
