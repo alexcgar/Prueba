@@ -6,44 +6,26 @@
     <title>Mi Página Web</title>
 </head>
 <body>
-    <h1>EXTERNAL WEBSITE TEST ADOBE</h1>
-    <script type='text/javascript'>
+ <script type='text/javascript'>
 	function initEmbeddedMessaging() {
-		// Añadir timeout de 10 segundos antes de mostrar el agente
-		setTimeout(function() {
-			try {
-				embeddedservice_bootstrap.settings.language = 'nl_NL'; // For example, enter 'en' or 'en-US'
+		try {
+			embeddedservice_bootstrap.settings.language = 'en_US'; // For example, enter 'en' or 'en-US'
 
-				embeddedservice_bootstrap.init(
-					'00Dbd000000XkCn',
-					'Github_Messaging_Setting',
-					'https://onecrminetum--test.sandbox.my.site.com/ESWGithubMessagingSetti1759831747758',
-					{
-						scrt2URL: 'https://onecrminetum--test.sandbox.my.salesforce-scrt.com'
-					}
-				);
-				
-				console.log('Agente de chat cargado después de 10 segundos');
-				
-				// Abrir el chat automáticamente después de que se inicialice
-				setTimeout(function() {
-					try {
-						if (embeddedservice_bootstrap.utilAPI && embeddedservice_bootstrap.utilAPI.openWidget) {
-							embeddedservice_bootstrap.utilAPI.openWidget();
-							console.log('Chat abierto automáticamente');
-						} else {
-							console.log('utilAPI no disponible aún');
-						}
-					} catch (err) {
-						console.error('Error abriendo el chat: ', err);
-					}
-				}, 2000); // 2 segundos después de aparecer el ícono
-				
-			} catch (err) {
-				console.error('Error loading Embedded Messaging: ', err);
-			}
-		}, 10000); // 10000 milisegundos = 10 segundos
+			embeddedservice_bootstrap.init(
+				'00DG500000CPfYv',
+				'AFC_ChannerChat',
+				'https://onecrminetum--agentforce.sandbox.my.site.com/ESWChannelChat1761912240293',
+				{
+					scrt2URL: 'https://onecrminetum--agentforce.sandbox.my.salesforce-scrt.com'
+				}
+			);
+		} catch (err) {
+			console.error('Error loading Embedded Messaging: ', err);
+		}
 	};
+</script>
+<script type='text/javascript' src='https://onecrminetum--agentforce.sandbox.my.site.com/ESWChannelChat1761912240293/assets/js/bootstrap.min.js' onload='initEmbeddedMessaging()'></script>
+
 </script>
 <script type='text/javascript' src='https://onecrminetum--test.sandbox.my.site.com/ESWGithubMessagingSetti1759831747758/assets/js/bootstrap.min.js' onload='initEmbeddedMessaging()'></script>
 
