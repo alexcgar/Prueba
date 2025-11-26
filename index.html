@@ -6,25 +6,63 @@
 	<title>Mi Página Web</title>
 </head>
 <body>
-<script type='text/javascript'>
-	function initEmbeddedMessaging() {
-		try {
-			embeddedservice_bootstrap.settings.language = 'en_US'; // For example, enter 'en' or 'en-US'
 
-			embeddedservice_bootstrap.init(
-				'00DG500000CPfYv',
-				'AFC_ChannerChat',
-				'https://onecrminetum--agentforce.sandbox.my.site.com/ESWChannelChat1761912240293',
-				{
-					scrt2URL: 'https://onecrminetum--agentforce.sandbox.my.salesforce-scrt.com'
-				}
-			);
-		} catch (err) {
-			console.error('Error loading Embedded Messaging: ', err);
-		}
-	};
+<script type="text/javascript">
+    function initEmbeddedMessaging() {
+        try {
+            embeddedservice_bootstrap.settings.language = 'en_US';
+
+            embeddedservice_bootstrap.init(
+                '00DG500000CPfYv',
+                'AFC_ChannerChat',
+                'https://onecrminetum--agentforce.sandbox.my.site.com/ESWChannelChat1761912240293',
+                {
+                    scrt2URL: 'https://onecrminetum--agentforce.sandbox.my.salesforce-scrt.com'
+                }
+            );
+        } catch (err) {
+            console.error('Error loading Embedded Messaging: ', err);
+        }
+    }
 </script>
-<script type='text/javascript' src='https://onecrminetum--agentforce.sandbox.my.site.com/ESWChannelChat1761912240293/assets/js/bootstrap.min.js' onload='initEmbeddedMessaging()'></script>
+
+<script type="text/javascript" src="https://onecrminetum--agentforce.sandbox.my.site.com/ESWChannelChat1761912240293/assets/js/bootstrap.min.js" onload="initEmbeddedMessaging -->
+<script>
+window.addEventListener("onEmbeddedMessagingReady", () => {
+    let buffer = "";
+    let typingIndicator = document.createElement("div");
+    typingIndicator.innerText = "El agente está escribiendo...";
+    typingIndicator.style.fontStyle = "italic";
+
+    embeddedservice_bootstrap.registerEventHandler("MESSAGE_RECEIVED", (event) => {
+        const data = event.data;
+
+        // Si es un token parcial (streaming)
+        if (data.entryType === "StreamingToken") {
+            if (!document.body.contains(typingIndicator)) {
+                document.body.appendChild(typingIndicator);
+            }
+            buffer += data.entryPayload?.streamingToken?.token?.text || "";
+        }
+
+        // Cuando llega el mensaje completo
+        if (data.entryType === "Message") {
+            if (document.body.contains(typingIndicator)) {
+                document.body.removeChild(typingIndicator);
+            }
+            const finalText = buffer || data.entryPayload?.text || "";
+            buffer = "";
+
+            // Renderiza el mensaje completo en tu contenedor
+            const chatOutput = document.querySelector("#chat-output") || document.body;
+            const msgDiv = document.createElement("div");
+            msgDiv.innerText = finalText;
+            chatOutput.appendChild(msgDiv);
+        }
+    });
+});
+</script>
+
 
 
 
