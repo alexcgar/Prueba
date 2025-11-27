@@ -5,9 +5,51 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">   
 	<title>Mi Página Web 2</title>
     <style>
-        /* Ocultar el efecto de streaming visualmente */
+        /* Ocultar mensajes mientras se están cargando */
         .embeddedMessagingConversationButton {
             opacity: 1 !important;
+        }
+        
+        /* Ocultar el texto que se está cargando (streaming) */
+        .message-streaming {
+            display: none !important;
+        }
+        
+        /* Indicador de carga personalizado */
+        .custom-loading-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 10px;
+            font-style: italic;
+            color: #666;
+        }
+        
+        .custom-loading-indicator .dot {
+            width: 8px;
+            height: 8px;
+            background-color: #666;
+            border-radius: 50%;
+            animation: loadingDots 1.4s infinite ease-in-out both;
+        }
+        
+        .custom-loading-indicator .dot:nth-child(1) {
+            animation-delay: -0.32s;
+        }
+        
+        .custom-loading-indicator .dot:nth-child(2) {
+            animation-delay: -0.16s;
+        }
+        
+        @keyframes loadingDots {
+            0%, 80%, 100% {
+                transform: scale(0);
+                opacity: 0.5;
+            }
+            40% {
+                transform: scale(1);
+                opacity: 1;
+            }
         }
     </style>
 </head>
@@ -45,18 +87,78 @@
         console.log("Embedded Messaging está listo");
         
         let messageBuffer = new Map();
+        let loadingIndicators = new Map();
         
         if (embeddedservice_bootstrap && embeddedservice_bootstrap.registerEventHandler) {
-            // Interceptar todos los eventos de mensajes
-            embeddedservice_bootstrap.registerEventHandler("*", (event) => {
-                console.log("Evento recibido:", event.type, event.data);
+            
+            // Escuchar cuando comienza un mensaje nuevo
+            embeddedservice_bootstrap.registerEventHandler("MESSAGE_RECEIVED", (event) => {
+                const data = event.data;
+                console.log("Evento MESSAGE_RECEIVED:", data);
                 
-                // Intentar prevenir el renderizado del streaming
-                if (event.data && event.data.entryType === "StreamingToken") {
-                    console.log("Bloqueando token de streaming");
-                    event.preventDefault && event.preventDefault();
-                    event.stopPropagation && event.stopPropagation();
-                    return false;
+                // Si es el inicio del streaming, ocultar y mostrar indicador
+                if (data.entryType === "StreamingToken") {
+                    const messageId = data.id || 'current';
+                    
+                    // Acumular el mensaje
+                    if (!messageBuffer.has(messageId)) {
+                        messageBuffer.set(messageId, '');
+                        
+                        // Buscar el último mensaje del bot y ocultarlo
+                        setTimeout(() => {
+                            const chatMessages = document.querySelectorAll('[data-test="message-text"], .message-content, .embeddedServiceHelpArticleMessage');
+                            if (chatMessages.length > 0) {
+                                const lastMessage = chatMessages[chatMessages.length - 1];
+                                
+                                // Ocultar el mensaje que se está construyendo
+                                lastMessage.classList.add('message-streaming');
+                                
+                                // Crear indicador de carga
+                                if (!loadingIndicators.has(messageId)) {
+                                    const loadingDiv = document.createElement('div');
+                                    loadingDiv.className = 'custom-loading-indicator';
+                                    loadingDiv.innerHTML = `
+                                        <span>Escribiendo</span>
+                                        <div class="dot"></div>
+                                        <div class="dot"></div>
+                                        <div class="dot"></div>
+                                    `;
+                                    loadingIndicators.set(messageId, loadingDiv);
+                                    
+                                    // Insertar después del mensaje oculto
+                                    lastMessage.parentNode.insertBefore(loadingDiv, lastMessage.nextSibling);
+                                }
+                            }
+                        }, 50);
+                    }
+                    
+                    // Acumular tokens
+                    messageBuffer.set(messageId, 
+                        messageBuffer.get(messageId) + (data.entryPayload?.streamingToken?.token?.text || '')
+                    );
+                }
+                
+                // Cuando llega el mensaje completo
+                if (data.entryType === "Message") {
+                    const messageId = data.id || 'current';
+                    
+                    setTimeout(() => {
+                        // Remover indicador de carga
+                        const loadingIndicator = loadingIndicators.get(messageId);
+                        if (loadingIndicator && loadingIndicator.parentNode) {
+                            loadingIndicator.parentNode.removeChild(loadingIndicator);
+                            loadingIndicators.delete(messageId);
+                        }
+                        
+                        // Mostrar el mensaje completo
+                        const chatMessages = document.querySelectorAll('.message-streaming');
+                        chatMessages.forEach(msg => {
+                            msg.classList.remove('message-streaming');
+                        });
+                        
+                        // Limpiar buffer
+                        messageBuffer.delete(messageId);
+                    }, 100);
                 }
             });
         }
