@@ -3,7 +3,13 @@
 <head>
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">   
-	<title>Mi Página Web</title>
+	<title>Mi Página Web 2</title>
+    <style>
+        /* Ocultar el efecto de streaming visualmente */
+        .embeddedMessagingConversationButton {
+            opacity: 1 !important;
+        }
+    </style>
 </head>
 <body>
 <h1>Bienvenido a Mi Página Web</h1>
@@ -12,8 +18,10 @@
         try {
             embeddedservice_bootstrap.settings.language = 'en_US';
             
-            // Desactivar el streaming para mostrar mensajes completos
+            // Intentar múltiples configuraciones para desactivar streaming
             embeddedservice_bootstrap.settings.disableStreamingTokens = true;
+            embeddedservice_bootstrap.settings.enableStreaming = false;
+            embeddedservice_bootstrap.settings.streamingEnabled = false;
 
             embeddedservice_bootstrap.init(
                 '00DG500000CPfYv',
@@ -30,6 +38,30 @@
 </script>
 
 <script type="text/javascript" src="https://onecrminetum--agentforce.sandbox.my.site.com/ESWChannelChat1761912240293/assets/js/bootstrap.min.js" onload="initEmbeddedMessaging()"></script>
+
+<script type="text/javascript">
+    // Interceptar y acumular mensajes de streaming
+    window.addEventListener("onEmbeddedMessagingReady", () => {
+        console.log("Embedded Messaging está listo");
+        
+        let messageBuffer = new Map();
+        
+        if (embeddedservice_bootstrap && embeddedservice_bootstrap.registerEventHandler) {
+            // Interceptar todos los eventos de mensajes
+            embeddedservice_bootstrap.registerEventHandler("*", (event) => {
+                console.log("Evento recibido:", event.type, event.data);
+                
+                // Intentar prevenir el renderizado del streaming
+                if (event.data && event.data.entryType === "StreamingToken") {
+                    console.log("Bloqueando token de streaming");
+                    event.preventDefault && event.preventDefault();
+                    event.stopPropagation && event.stopPropagation();
+                    return false;
+                }
+            });
+        }
+    });
+</script>
 
 </body>
 </html>
