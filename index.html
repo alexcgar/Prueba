@@ -4,15 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Mi Página Web con Chat Salesforce</title>
-
-  <style>
-    .my-custom-loader {
-      font-style: italic;
-      color: #666;
-      padding: 8px;
-      margin: 4px 0;
-    }
-  </style>
 </head>
 <body>
   <h1>Mi Página con Chat Integrado</h1>
@@ -42,44 +33,7 @@
           onload='initEmbeddedMessaging()'>
   </script>
 
-  <!-- Script para intentar ocultar streaming y mostrar loader -->
-  <script>
-    window.addEventListener('onEmbeddedMessagingReady', () => {
-      console.log('Embedded Messaging listo — intentando activar interceptación');
-
-      const observer = new MutationObserver((mutationsList) => {
-        for (const mutation of mutationsList) {
-          for (const node of mutation.addedNodes) {
-            if (node.nodeType === 1) {
-              // Aten­ción: necesitas inspeccionar el DOM real para saber qué selector usar
-              // Aquí uso un ejemplo genérico:
-              const isAgentMessage = node.classList && node.classList.contains('agentMessage'); 
-              if (isAgentMessage) {
-                node.style.visibility = 'hidden';
-
-                const loader = document.createElement('div');
-                loader.className = 'my-custom-loader';
-                loader.innerText = 'Cargando respuesta…';
-                node.parentNode.insertBefore(loader, node);
-
-                setTimeout(() => {
-                  loader.remove();
-                  node.style.visibility = 'visible';
-                }, 800);  // 800 ms — ajusta según lo que necesites
-              }
-            }
-          }
-        }
-      });
-
-      // Trata de detectar contenedor de mensajes — necesitarás inspeccionar en el navegador
-      const chatContainer = document.querySelector('body'); // como fallback
-      if (chatContainer) {
-        observer.observe(chatContainer, { childList: true, subtree: true });
-      } else {
-        console.warn('No se detectó contenedor de chat para observer');
-      }
-    });
+ 
   </script>
 
 </body>
