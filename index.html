@@ -1,128 +1,86 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">   
-	<title>Mi Página Web 2</title>
-    <style>
-        /* Ocultar mensajes mientras se están cargando */
-        .embeddedMessagingConversationButton {
-            opacity: 1 !important;
-        }
-        
-        /* Ocultar el texto que se está cargando (streaming) */
-        .message-streaming {
-            display: none !important;
-        }
-        
-        /* Indicador de carga personalizado */
-        .custom-loading-indicator {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            padding: 10px;
-            font-style: italic;
-            color: #666;
-        }
-        
-        .custom-loading-indicator .dot {
-            width: 8px;
-            height: 8px;
-            background-color: #666;
-            border-radius: 50%;
-            animation: loadingDots 1.4s infinite ease-in-out both;
-        }
-        
-        .custom-loading-indicator .dot:nth-child(1) {
-            animation-delay: -0.32s;
-        }
-        
-        .custom-loading-indicator .dot:nth-child(2) {
-            animation-delay: -0.16s;
-        }
-        
-        @keyframes loadingDots {
-            0%, 80%, 100% {
-                transform: scale(0);
-                opacity: 0.5;
-            }
-            40% {
-                transform: scale(1);
-                opacity: 1;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mi Página Web con Chat Salesforce</title>
+
+  <style>
+    .my-custom-loader {
+      font-style: italic;
+      color: #666;
+      padding: 8px;
+      margin: 4px 0;
+    }
+  </style>
 </head>
 <body>
-<h1>Bienvenido a Mi Página Web</h1>
-<script type='text/javascript'>
-	function initEmbeddedMessaging() {
-		try {
-			embeddedservice_bootstrap.settings.language = 'en_US'; // For example, enter 'en' or 'en-US'
+  <h1>Mi Página con Chat Integrado</h1>
 
-			embeddedservice_bootstrap.init(
-				'00Dbd000004BjPJ',
-				'AFC_ChannerChat',
-				'https://onecrminetum--partialsdx.sandbox.my.site.com/ESWChannelChat1764319045440',
-				{
-					scrt2URL: 'https://onecrminetum--partialsdx.sandbox.my.salesforce-scrt.com'
-				}
-			);
-		} catch (err) {
-			console.error('Error loading Embedded Messaging: ', err);
-		}
-	};
-</script>
-<script type='text/javascript' src='https://onecrminetum--partialsdx.sandbox.my.site.com/ESWChannelChat1764319045440/assets/js/bootstrap.min.js' onload='initEmbeddedMessaging()'></script>
+  <!-- Aquí carga tu script existente de Embedded Messaging / Agentforce -->
+  <script type='text/javascript'>
+    function initEmbeddedMessaging() {
+      try {
+        embeddedservice_bootstrap.settings.language = 'en_US';
 
+        embeddedservice_bootstrap.init(
+          '00Dbd000004BjPJ',
+          'AFC_ChannerChat',
+          'https://onecrminetum--partialsdx.sandbox.my.site.com/ESWChannelChat1764319045440',
+          {
+            scrt2URL: 'https://onecrminetum--partialsdx.sandbox.my.salesforce-scrt.com'
+          }
+        );
+      } catch (err) {
+        console.error('Error loading Embedded Messaging: ', err);
+      }
+    };
+  </script>
+
+  <script type='text/javascript'
+          src='https://onecrminetum--partialsdx.sandbox.my.site.com/ESWChannelChat1764319045440/assets/js/bootstrap.min.js'
+          onload='initEmbeddedMessaging()'>
+  </script>
+
+  <!-- Script para intentar ocultar streaming y mostrar loader -->
+  <script>
+    window.addEventListener('onEmbeddedMessagingReady', () => {
+      console.log('Embedded Messaging listo — intentando activar interceptación');
+
+      const observer = new MutationObserver((mutationsList) => {
+        for (const mutation of mutationsList) {
+          for (const node of mutation.addedNodes) {
+            if (node.nodeType === 1) {
+              // Aten­ción: necesitas inspeccionar el DOM real para saber qué selector usar
+              // Aquí uso un ejemplo genérico:
+              const isAgentMessage = node.classList && node.classList.contains('agentMessage'); 
+              if (isAgentMessage) {
+                node.style.visibility = 'hidden';
+
+                const loader = document.createElement('div');
+                loader.className = 'my-custom-loader';
+                loader.innerText = 'Cargando respuesta…';
+                node.parentNode.insertBefore(loader, node);
+
+                setTimeout(() => {
+                  loader.remove();
+                  node.style.visibility = 'visible';
+                }, 800);  // 800 ms — ajusta según lo que necesites
+              }
+            }
+          }
+        }
+      });
+
+      // Trata de detectar contenedor de mensajes — necesitarás inspeccionar en el navegador
+      const chatContainer = document.querySelector('body'); // como fallback
+      if (chatContainer) {
+        observer.observe(chatContainer, { childList: true, subtree: true });
+      } else {
+        console.warn('No se detectó contenedor de chat para observer');
+      }
+    });
+  </script>
 
 </body>
 </html>
-
-
-
-<!--
-Guía de uso de utilAPI de Salesforce Embedded Messaging
-
-1. ¿Qué es utilAPI?
-utilAPI es una interfaz JavaScript que permite interactuar con el widget de chat de Salesforce Embedded Messaging desde tu página web.
-
-2. Funciones principales:
-
-- openWidget()
-	Abre el widget de chat.
-	Ejemplo:
-	embeddedservice_bootstrap.utilAPI.openWidget();
-
-- closeWidget()
-	Cierra el widget de chat.
-	Ejemplo:
-	embeddedservice_bootstrap.utilAPI.closeWidget();
-
-- isWidgetOpen()
-	Devuelve true si el widget está abierto, false si está cerrado.
-	Ejemplo:
-	const abierto = embeddedservice_bootstrap.utilAPI.isWidgetOpen();
-
-- minimizeWidget()
-	Minimiza el widget de chat.
-	Ejemplo:
-	embeddedservice_bootstrap.utilAPI.minimizeWidget();
-
-- maximizeWidget()
-	Maximiza el widget de chat.
-	Ejemplo:
-	embeddedservice_bootstrap.utilAPI.maximizeWidget();
-
-3. Uso típico:
-Asegúrate de que embeddedservice_bootstrap.utilAPI esté disponible antes de llamar a sus métodos, normalmente después de que el script de bootstrap se haya cargado.
-
-4. Ejemplo de integración:
-<script>
-	if (embeddedservice_bootstrap.utilAPI) {
-		embeddedservice_bootstrap.utilAPI.openWidget();
-	}
-</script>
-
-Consulta la documentación oficial de Salesforce para más detalles y métodos avanzados.
--->
