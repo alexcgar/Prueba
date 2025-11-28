@@ -55,115 +55,26 @@
 </head>
 <body>
 <h1>Bienvenido a Mi Página Web</h1>
-<script type="text/javascript">
-    function initEmbeddedMessaging() {
-        try {
-            embeddedservice_bootstrap.settings.language = 'en_US';
-            
-            // Intentar múltiples configuraciones para desactivar streaming
-            embeddedservice_bootstrap.settings.disableStreamingTokens = true;
-            embeddedservice_bootstrap.settings.enableStreaming = false;
-            embeddedservice_bootstrap.settings.streamingEnabled = false;
+<script type='text/javascript'>
+	function initEmbeddedMessaging() {
+		try {
+			embeddedservice_bootstrap.settings.language = 'en_US'; // For example, enter 'en' or 'en-US'
 
-            embeddedservice_bootstrap.init(
-                '00DG500000CPfYv',
-                'AFC_ChannerChat',
-                'https://onecrminetum--agentforce.sandbox.my.site.com/ESWChannelChat1761912240293',
-                {
-                    scrt2URL: 'https://onecrminetum--agentforce.sandbox.my.salesforce-scrt.com'
-                }
-            );
-        } catch (err) {
-            console.error('Error loading Embedded Messaging: ', err);
-        }
-    }
+			embeddedservice_bootstrap.init(
+				'00Dbd000004BjPJ',
+				'AFC_ChannerChat',
+				'https://onecrminetum--partialsdx.sandbox.my.site.com/ESWChannelChat1764319045440',
+				{
+					scrt2URL: 'https://onecrminetum--partialsdx.sandbox.my.salesforce-scrt.com'
+				}
+			);
+		} catch (err) {
+			console.error('Error loading Embedded Messaging: ', err);
+		}
+	};
 </script>
+<script type='text/javascript' src='https://onecrminetum--partialsdx.sandbox.my.site.com/ESWChannelChat1764319045440/assets/js/bootstrap.min.js' onload='initEmbeddedMessaging()'></script>
 
-<script type="text/javascript" src="https://onecrminetum--agentforce.sandbox.my.site.com/ESWChannelChat1761912240293/assets/js/bootstrap.min.js" onload="initEmbeddedMessaging()"></script>
-
-<script type="text/javascript">
-    // Interceptar y acumular mensajes de streaming
-    window.addEventListener("onEmbeddedMessagingReady", () => {
-        console.log("Embedded Messaging está listo");
-        
-        let messageBuffer = new Map();
-        let loadingIndicators = new Map();
-        
-        if (embeddedservice_bootstrap && embeddedservice_bootstrap.registerEventHandler) {
-            
-            // Escuchar cuando comienza un mensaje nuevo
-            embeddedservice_bootstrap.registerEventHandler("MESSAGE_RECEIVED", (event) => {
-                const data = event.data;
-                console.log("Evento MESSAGE_RECEIVED:", data);
-                
-                // Si es el inicio del streaming, ocultar y mostrar indicador
-                if (data.entryType === "StreamingToken") {
-                    const messageId = data.id || 'current';
-                    
-                    // Acumular el mensaje
-                    if (!messageBuffer.has(messageId)) {
-                        messageBuffer.set(messageId, '');
-                        
-                        // Buscar el último mensaje del bot y ocultarlo
-                        setTimeout(() => {
-                            const chatMessages = document.querySelectorAll('[data-test="message-text"], .message-content, .embeddedServiceHelpArticleMessage');
-                            if (chatMessages.length > 0) {
-                                const lastMessage = chatMessages[chatMessages.length - 1];
-                                
-                                // Ocultar el mensaje que se está construyendo
-                                lastMessage.classList.add('message-streaming');
-                                
-                                // Crear indicador de carga
-                                if (!loadingIndicators.has(messageId)) {
-                                    const loadingDiv = document.createElement('div');
-                                    loadingDiv.className = 'custom-loading-indicator';
-                                    loadingDiv.innerHTML = `
-                                        <span>Escribiendo</span>
-                                        <div class="dot"></div>
-                                        <div class="dot"></div>
-                                        <div class="dot"></div>
-                                    `;
-                                    loadingIndicators.set(messageId, loadingDiv);
-                                    
-                                    // Insertar después del mensaje oculto
-                                    lastMessage.parentNode.insertBefore(loadingDiv, lastMessage.nextSibling);
-                                }
-                            }
-                        }, 50);
-                    }
-                    
-                    // Acumular tokens
-                    messageBuffer.set(messageId, 
-                        messageBuffer.get(messageId) + (data.entryPayload?.streamingToken?.token?.text || '')
-                    );
-                }
-                
-                // Cuando llega el mensaje completo
-                if (data.entryType === "Message") {
-                    const messageId = data.id || 'current';
-                    
-                    setTimeout(() => {
-                        // Remover indicador de carga
-                        const loadingIndicator = loadingIndicators.get(messageId);
-                        if (loadingIndicator && loadingIndicator.parentNode) {
-                            loadingIndicator.parentNode.removeChild(loadingIndicator);
-                            loadingIndicators.delete(messageId);
-                        }
-                        
-                        // Mostrar el mensaje completo
-                        const chatMessages = document.querySelectorAll('.message-streaming');
-                        chatMessages.forEach(msg => {
-                            msg.classList.remove('message-streaming');
-                        });
-                        
-                        // Limpiar buffer
-                        messageBuffer.delete(messageId);
-                    }, 100);
-                }
-            });
-        }
-    });
-</script>
 
 </body>
 </html>
