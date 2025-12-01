@@ -9,29 +9,26 @@
   <h1>Mi Página con Chat Integrado</h1>
 
   <!-- Aquí carga tu script existente de Embedded Messaging / Agentforce -->
-  <script type='text/javascript'>
-    function initEmbeddedMessaging() {
-      try {
-        embeddedservice_bootstrap.settings.language = 'en_US';
+ <script type='text/javascript'>
+	function initEmbeddedMessaging() {
+		try {
+			embeddedservice_bootstrap.settings.language = 'en_US'; // For example, enter 'en' or 'en-US'
 
-        embeddedservice_bootstrap.init(
-          '00Dbd000004BjPJ',
-          'AFC_ChannerChat',
-          'https://onecrminetum--partialsdx.sandbox.my.site.com/ESWChannelChat1764319045440',
-          {
-            scrt2URL: 'https://onecrminetum--partialsdx.sandbox.my.salesforce-scrt.com'
-          }
-        );
-      } catch (err) {
-        console.error('Error loading Embedded Messaging: ', err);
-      }
-    };
-  </script>
+			embeddedservice_bootstrap.init(
+				'00DG500000CPfYv',
+				'AFC_ChannerChat',
+				'https://onecrminetum--agentforce.sandbox.my.site.com/ESWChannelChat1761912240293',
+				{
+					scrt2URL: 'https://onecrminetum--agentforce.sandbox.my.salesforce-scrt.com'
+				}
+			);
+		} catch (err) {
+			console.error('Error loading Embedded Messaging: ', err);
+		}
+	};
+</script>
+<script type='text/javascript' src='https://onecrminetum--agentforce.sandbox.my.site.com/ESWChannelChat1761912240293/assets/js/bootstrap.min.js' onload='initEmbeddedMessaging()'></script>
 
-  <script type='text/javascript'
-          src='https://onecrminetum--partialsdx.sandbox.my.site.com/ESWChannelChat1764319045440/assets/js/bootstrap.min.js'
-          onload='initEmbeddedMessaging()'>
-  </script>
 
  
   </script>
