@@ -8,26 +8,136 @@
 <body>
   <h1>Mi Página con Chat Integrado</h1>
 
-  <!-- Aquí carga tu script existente de Embedded Messaging / Agentforce -->
- <script type='text/javascript'>
+  <script type='text/javascript'>
 	function initEmbeddedMessaging() {
 		try {
-			embeddedservice_bootstrap.settings.language = 'en_US'; // For example, enter 'en' or 'en-US'
-
+			embeddedservice_bootstrap.settings.language = 'en_US';
+			
 			embeddedservice_bootstrap.init(
-				'00DG500000CPfYv',
+				'00Dbd000004BjPJ',
 				'AFC_ChannerChat',
-				'https://onecrminetum--agentforce.sandbox.my.site.com/ESWChannelChat1761912240293',
+				'https://onecrminetum--partialsdx.sandbox.my.site.com/ESWChannelChat1764319045440',
 				{
-					scrt2URL: 'https://onecrminetum--agentforce.sandbox.my.salesforce-scrt.com'
+					scrt2URL: 'https://onecrminetum--partialsdx.sandbox.my.salesforce-scrt.com'
 				}
 			);
 		} catch (err) {
 			console.error('Error loading Embedded Messaging: ', err);
 		}
-	};
+	}
+
+	// Agregar el mensaje personalizado cuando el chat esté listo
+	window.addEventListener('onEmbeddedMessagingReady', () => {
+		console.log('Embedded Messaging is ready');
+		
+		// Función para inyectar el mensaje personalizado
+		function addCustomMessage() {
+			// Buscar el contenedor del pre-chat
+			const prechatSelectors = [
+				'[data-component="siteforce:messagingPrechat"]',
+				'.embeddedMessagingFrame',
+				'.messagingPreChat',
+				'iframe[title*="chat" i]'
+			];
+			
+			let prechatFound = false;
+			
+			// Intentar con cada selector
+			for (let selector of prechatSelectors) {
+				const container = document.querySelector(selector);
+				
+				if (container && !document.getElementById('custom-welcome-msg')) {
+					// Crear el mensaje personalizado
+					const customMessage = document.createElement('div');
+					customMessage.id = 'custom-welcome-msg';
+					customMessage.style.cssText = `
+						background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+						color: white;
+						padding: 20px;
+						margin: 0 0 15px 0;
+						border-radius: 8px;
+						box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+						font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+						text-align: center;
+					`;
+					
+					customMessage.innerHTML = `
+						<h2 style="margin: 0 0 10px 0; font-size: 22px; font-weight: 600;">
+							🚀 Let's build a project together
+						</h2>
+						<p style="margin: 0; font-size: 14px; line-height: 1.5; opacity: 0.95;">
+							Ready to start? Fill out the form below and let's get started!
+						</p>
+					`;
+					
+					container.insertBefore(customMessage, container.firstChild);
+					prechatFound = true;
+					console.log('Custom message added successfully');
+					break;
+				}
+			}
+			
+			// Si no se encontró con los selectores normales, intentar dentro del iframe
+			if (!prechatFound) {
+				const iframes = document.querySelectorAll('iframe');
+				iframes.forEach(iframe => {
+					try {
+						const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+						const formContent = iframeDoc.querySelector('.formContent, [class*="prechat"], [class*="preChat"]');
+						
+						if (formContent && !iframeDoc.getElementById('custom-welcome-msg')) {
+							const customMessage = iframeDoc.createElement('div');
+							customMessage.id = 'custom-welcome-msg';
+							customMessage.style.cssText = `
+								background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+								color: white;
+								padding: 20px;
+								margin: 0 0 15px 0;
+								border-radius: 8px;
+								box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+								font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+								text-align: center;
+							`;
+							
+							customMessage.innerHTML = `
+								<h2 style="margin: 0 0 10px 0; font-size: 22px; font-weight: 600;">
+									🚀 Let's build a project together
+								</h2>
+								<p style="margin: 0; font-size: 14px; line-height: 1.5; opacity: 0.95;">
+									Ready to start? Fill out the form below and let's get started!
+								</p>
+							`;
+							
+							formContent.insertBefore(customMessage, formContent.firstChild);
+							console.log('Custom message added inside iframe');
+						}
+					} catch (e) {
+						// Si hay error de CORS, ignorar silenciosamente
+					}
+				});
+			}
+		}
+		
+		// Intentar agregar el mensaje inmediatamente
+		addCustomMessage();
+		
+		// Intentar de nuevo después de un pequeño delay por si el DOM no está listo
+		setTimeout(addCustomMessage, 500);
+		setTimeout(addCustomMessage, 1000);
+		setTimeout(addCustomMessage, 2000);
+		
+		// Observar cambios en el DOM para cuando se abra el chat
+		const observer = new MutationObserver(() => {
+			addCustomMessage();
+		});
+		
+		observer.observe(document.body, {
+			childList: true,
+			subtree: true
+		});
+	});
 </script>
-<script type='text/javascript' src='https://onecrminetum--agentforce.sandbox.my.site.com/ESWChannelChat1761912240293/assets/js/bootstrap.min.js' onload='initEmbeddedMessaging()'></script>
+<script type='text/javascript' src='https://onecrminetum--partialsdx.sandbox.my.site.com/ESWChannelChat1764319045440/assets/js/bootstrap.min.js' onload='initEmbeddedMessaging()'></script>
 
 
  
