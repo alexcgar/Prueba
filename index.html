@@ -14,33 +14,25 @@
 <body>
   <h1>Mi Página con Chat Integrado</h1>
   <p>El chat debería aparecer en la esquina inferior derecha.</p>
+<script type='text/javascript'>
+	function initEmbeddedMessaging() {
+		try {
+			embeddedservice_bootstrap.settings.language = 'en_US'; // For example, enter 'en' or 'en-US'
 
-  <script type='text/javascript'>
-    function initEmbeddedMessaging() {
-      try {
-        embeddedservice_bootstrap.settings.language = 'es'; // Cambiado a español
-        
-        embeddedservice_bootstrap.init(
-          '00D2o000000k4H1',
-          'Channel_Chat',
-          'https://onecrminetum.my.site.com/ESWChannelChat1768480941924',
-          {
-            scrt2URL: 'https://onecrminetum.my.salesforce-scrt.com'
-          }
-        );
-        
-        console.log('Embedded Messaging iniciado correctamente');
-      } catch (err) {
-        console.error('Error loading Embedded Messaging: ', err);
-      }
-    }
-  </script>
-  
-  <script 
-    type='text/javascript' 
-    src='https://onecrminetum.my.site.com/ESWChannelChat1768480941924/assets/js/bootstrap.min.js' 
-    onload='initEmbeddedMessaging()'
-    onerror="console.error('Error al cargar el script de bootstrap')"
-  ></script>
+			embeddedservice_bootstrap.init(
+				'00D2o000000k4H1',
+				'Channel_Chat',
+				'https://onecrminetum.my.site.com/ESWChannelChat1768480941924',
+				{
+					scrt2URL: 'https://onecrminetum.my.salesforce-scrt.com'
+				}
+			);
+		} catch (err) {
+			console.error('Error loading Embedded Messaging: ', err);
+		}
+	};
+</script>
+<script type='text/javascript' src='https://onecrminetum.my.site.com/ESWChannelChat1768480941924/assets/js/bootstrap.min.js' onload='initEmbeddedMessaging()'></script>
+
 </body>
 </html>
